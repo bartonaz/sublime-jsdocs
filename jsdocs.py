@@ -280,21 +280,31 @@ class JsdocsParser(object):
         else:
             valType = self.guessTypeFromValue(val) or self.guessTypeFromName(name) or "[type]"
 
-        if self.inline:
-            out.append("@%s %s${1:%s}%s ${1:[description]}" % (
-                self.settings['typeTag'],
+        if (self.viewSettings.get("jsdocs_var_use_property_tag") is True):
+            out.append("@%s %s${1:%s}%s %s ${1:[description]}" % (
+                "property",
                 "{" if self.settings['curlyTypes'] else "",
                 valType,
-                "}" if self.settings['curlyTypes'] else ""
+                "}" if self.settings['curlyTypes'] else "",
+                name
             ))
         else:
-            out.append("${1:[%s description]}" % (escape(name)))
-            out.append("@%s %s${1:%s}%s" % (
-                self.settings['typeTag'],
-                "{" if self.settings['curlyTypes'] else "",
-                valType,
-                "}" if self.settings['curlyTypes'] else ""
-            ))
+            if self.inline:
+                out.append("@%s %s${1:%s}%s ${1:[description]}" % (
+                    self.settings['typeTag'],
+                    "{" if self.settings['curlyTypes'] else "",
+                    valType,
+                    "}" if self.settings['curlyTypes'] else ""
+                ))
+            else:
+                out.append("${1:[%s description]}" % (escape(name)))
+                out.append("@%s %s${1:%s}%s" % (
+                    self.settings['typeTag'],
+                    "{" if self.settings['curlyTypes'] else "",
+                    valType,
+                    "}" if self.settings['curlyTypes'] else ""
+                ))
+
 
         return out
 
